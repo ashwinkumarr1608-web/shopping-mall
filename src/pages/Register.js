@@ -10,7 +10,7 @@ function Register() {
   const registerUser = () => {
     console.log("Button Clicked");
 
-    axios.post("http://localhost:5000/register", {
+    axios.post("https://shopping-mall-backend-mc8c.onrender.com/register", {
         name,
         email,
         password
