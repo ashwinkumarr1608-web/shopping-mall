@@ -1,5 +1,6 @@
 import "./App.css";
 import { useState } from "react";
+import { Routes, Route, Link } from "react-router-dom";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -9,56 +10,38 @@ import Cart from "./pages/Cart";
 import Admin from "./pages/Admin";
 
 function App() {
-  const [page, setPage] = useState("home");
-const [cart, setCart] = useState([]);
+
+  const [cart, setCart] = useState([]);
+
   return (
-  <div>
-    <div className="navbar">
+    <div>
 
-      <button onClick={() => setPage("home")}>
-        Home
-      </button>
+      <nav>
+        <Link to="/">Home</Link>
+        <Link to="/login">Login</Link>
+        <Link to="/register">Register</Link>
+        <Link to="/products">Products</Link>
+        <Link to="/cart">Cart</Link>
+        <Link to="/admin">Admin</Link>
+      </nav>
 
-      <button onClick={() => setPage("login")}>
-        Login
-      </button>
+      <Routes>
+  <Route path="/" element={<Home />} />
+  <Route path="/login" element={<Login />} />
+  <Route path="/register" element={<Register />} />
 
-      <button onClick={() => setPage("register")}>
-        Register
-      </button>
+  <Route
+    path="/products"
+    element={<Products cart={cart} setCart={setCart} />}
+  />
 
-      <button onClick={() => setPage("products")}>
-        Products
-      </button>
+  <Route
+    path="/cart"
+    element={<Cart cart={cart} />}
+  />
 
-      <button onClick={() => setPage("cart")}>
-        Cart
-      </button>
-
-      <button onClick={() => setPage("admin")}>
-        Admin
-      </button>
-
-</div>
-
-<div className="content">
-
-<hr />
-
-      {page === "home" && <Home />}
-{page === "login" && <Login />}
-{page === "register" && <Register />}
-
-{page === "products" && (
-  <Products cart={cart} setCart={setCart} />
-)}
-
-{page === "cart" && (
-  <Cart cart={cart} />
-)}
-
-{page === "admin" && <Admin />}
-    </div>
+  <Route path="/admin" element={<Admin />} />
+</Routes>
     </div>
   );
 }

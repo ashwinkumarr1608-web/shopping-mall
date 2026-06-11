@@ -3,56 +3,56 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Login() {
-    const navigate = useNavigate();
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-    const loginUser = () => {
-   axios.post("https://shopping-mall-backend-mc8c.onrender.com/login", {
-      email,
-      password
-   }).then((response) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    if (response.data === "Login Success") {
+  const loginUser = () => {
+    axios.post("https://shopping-mall-backend-mc8c.onrender.com/login", {
+  email,
+  password
+}).then((response) => {
 
-        alert("Login Success");
-        navigate("/products");
-
-    } else {
-
-        alert("Invalid Email or Password");
-
-    }
+  if (response.data.message === "Login Success") {
+    alert("Login Success");
+    navigate("/products");
+  } else {
+    alert("Invalid Email or Password");
+  }
 
 })
-};
+.catch((error) => {
+  console.log(error);
+});
+  };
 
-    return (
-        <div>
-            <h1>Login Page</h1>
+  return (
+    <div>
+      <h1>Login Page</h1>
 
-            <input
-                type="email"
-                placeholder="Enter Email"
-                onChange={(e) => setEmail(e.target.value)}
-            />
+      <input
+        type="email"
+        placeholder="Enter Email"
+        onChange={(e) => setEmail(e.target.value)}
+      />
 
-            <br /><br />
+      <br /><br />
 
-            <input
-                type="password"
-                placeholder="Enter Password"
-                onChange={(e) => setPassword(e.target.value)}
-            />
+      <input
+        type="password"
+        placeholder="Enter Password"
+        onChange={(e) => setPassword(e.target.value)}
+      />
 
-            <br /><br />
+      <br /><br />
 
-            <button onClick={loginUser}>
-                Login
-            </button>
-        </div>
-    );
+      <button onClick={loginUser}>
+        Login
+      </button>
+    </div>
+  );
 }
 
 export default Login;

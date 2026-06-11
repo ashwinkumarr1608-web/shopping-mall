@@ -6,36 +6,35 @@ function Products({ cart, setCart }) {
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
-        axios.get("http://localhost:5000/products")
+        axios.get("https://shopping-mall-backend-mc8c.onrender.com/products")
         .then((response) => {
-            setProducts(response.data);
-        });
+    console.log(response.data);
+    alert(JSON.stringify(response.data));
+    setProducts(response.data);
+});
     }, []);
 const addToCart = (product) => {
   setCart([...cart, product]);
   alert(product.name + " Added To Cart");
 }
     return (
-        <div>
-            <h1>Products Page</h1>
+  <div>
+    <h1>Products Page</h1>
 
-            {
-                products.map((product) => (
-                    <div key={product.id}>
-                        <h3>{product.name}</h3>
-<p>₹ {product.price}</p>
+    {products.map((product) => (
+      <div key={product.id}>
+        <h3>{product.name}</h3>
 
-<button onClick={() => addToCart(product)}>
-    Add To Cart
-</button>
+        <p>₹ {product.price}</p>
 
-<hr />
-                    </div>
-                ))
-            }
+        <button onClick={() => addToCart(product)}>
+          Add To Cart
+        </button>
 
-        </div>
-    );
+        <hr />
+      </div>
+    ))}
+  </div>
+);
 }
-
 export default Products;
