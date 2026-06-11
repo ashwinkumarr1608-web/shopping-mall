@@ -16,7 +16,8 @@ function Register() {
   password
 })
 .then((res) => {
-    console.log("Response:", res.data);
+    console.log(res.data);
+    console.log(res.data.message);
     alert(res.data.message);
 })
 .catch((err) => {
