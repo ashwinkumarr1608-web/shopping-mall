@@ -1,6 +1,8 @@
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
+const nodemailer = require("nodemailer");
+
 require("dotenv").config();
 
 const app = express();
@@ -13,10 +15,9 @@ const db = mysql.createConnection({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  port: process.env.DB_PORT
+  port: process.env.DB_PORT,
 });
-console.log("HOST:", process.env.DB_HOST);
-console.log("PORT:", process.env.DB_PORT);
+
 db.connect((err) => {
   if (err) {
     console.log("Database Connection Failed", err);
@@ -25,73 +26,142 @@ db.connect((err) => {
   }
 });
 
+let generatedOTP = "";
+let userData = {};
+
+// Gmail transporter
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "ashwinkumarr1608@gmail.com",
+    pass: "chmbqlvsvsgxqmio"
+  }
+});
+
+// Home
 app.get("/", (req, res) => {
   res.send("ashwin test");
 });
 
+// Products
 app.get("/products", (req, res) => {
+
   db.query("SELECT * FROM products", (err, result) => {
+
     if (err) {
       res.send(err);
-    } else {
+    }
+    else {
       res.send(result);
     }
+
   });
+
 });
+
+// Register API (Send OTP)
 app.post("/register", (req, res) => {
 
-    const { name, email, password } = req.body;
+  const { name, email, password } = req.body;
 
-    db.query(
-        "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-        [name, email, password],
-        (err, result) => {
+  userData = {
+    name,
+    email,
+    password
+  };
 
-            if (err) {
-                console.log("INSERT ERROR:", err);
+  generatedOTP = Math.floor(
+    100000 + Math.random() * 900000
+  ).toString();
 
-                res.json({
-                    message: err.message
-                });
+  console.log("Generated OTP:", generatedOTP);
 
-            } else {
+  const mailOptions = {
+    from: "ashwinkumarr1608@gmail.com",
+    to: email,
+    subject: "OTP Verification",
+    text: `Your OTP is ${generatedOTP}`
+  };
 
-                console.log("Inserted Successfully");
+  transporter.sendMail(mailOptions, (error, info) => {
 
-                res.json({
-                    message: "User Registered Successfully"
-                });
+    if (error) {
+      console.log(error);
+      res.send("OTP sending failed");
+    }
+    else {
+      console.log("Email sent:", info.response);
+      res.send("OTP sent successfully");
+    }
 
-            }
-
-        }
-    );
+  });
 
 });
+
+// Verify OTP API
+app.post("/verifyotp", (req, res) => {
+
+  const { otp } = req.body;
+
+  if (otp === generatedOTP) {
+
+    db.query(
+      "INSERT INTO users(name,email,password) VALUES(?,?,?)",
+      [userData.name, userData.email, userData.password],
+      (err, result) => {
+
+        if (err) {
+          console.log(err);
+          res.send("Database Error");
+        }
+        else {
+          res.send("OTP verified successfully");
+        }
+
+      }
+    );
+
+  }
+  else {
+
+    res.send("Invalid OTP");
+
+  }
+
+});
+
+// Login API
 app.post("/login", (req, res) => {
+
     const { email, password } = req.body;
 
-    db.query(
-        "SELECT * FROM users WHERE email=? AND password=?",
-        [email, password],
-        (err, result) => {
-            if (err) {
-    console.log(err);
-    res.send(err);
+    console.log(email, password);
 
-            } else {
-                if (result.length > 0) {
-   res.json({
-      message: "Login Success",
-      role: result[0].role
-   });
-                } else {
-                    res.send("Invalid Email or Password");
-                }
+    const sql =
+    "SELECT * FROM users WHERE email=? AND password=?";
+
+    db.query(sql, [email, password], (err, result) => {
+
+        console.log(result);
+
+        if (err) {
+            console.log(err);
+            res.send("Error");
+        }
+        else {
+            if (result.length > 0) {
+                res.send("Login Success");
+            }
+            else {
+                res.send("Invalid Email or Password");
             }
         }
-    );
+    });
+
 });
+// Server start
 app.listen(5000, () => {
-  console.log("Server Running on Port 5000");
+
+  console.log("Server running on port 5000");
+
 });

@@ -10,36 +10,7 @@ function Register() {
 
   const navigate = useNavigate();
 
-  function handleRegister() {
-
-    axios.post("http://localhost:5000/register", {
-
-      name: name,
-      email: email,
-      password: password
-
-    })
-    .then((response) => {
-
-      alert(response.data);
-
-      if (response.data === "OTP sent successfully") {
-
-        navigate("/verify");
-
-      }
-
-    })
-    .catch((error) => {
-
-      console.log(error);
-
-    });
-
-  }
-
   return (
-
     <div>
 
       <h1>Register Page</h1>
@@ -68,12 +39,48 @@ function Register() {
 
       <br /><br />
 
-      <button onClick={handleRegister}>
+      <button
+        onClick={() => {
+
+          axios.post("http://localhost:5000/register", {
+            name: name,
+            email: email,
+            password: password
+          })
+
+          .then((response) => {
+
+            console.log(response.data);
+
+            if (response.data === "OTP sent successfully") {
+
+              alert("OTP Sent Successfully");
+
+              navigate("/verify");
+
+            }
+            else {
+
+              alert(response.data);
+
+            }
+
+          })
+
+          .catch((error) => {
+
+            console.log(error);
+
+          });
+
+        }}
+      >
+
         Register
+
       </button>
 
     </div>
-
   );
 
 }
