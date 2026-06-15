@@ -36,7 +36,16 @@ function Register() {
     .catch((error) => {
 
       console.log(error);
-      alert("Error");
+
+      if (error.response) {
+        alert("Server Error");
+      }
+      else if (error.request) {
+        alert("Network Error");
+      }
+      else {
+        alert(error.message);
+      }
 
     });
 
@@ -51,6 +60,7 @@ function Register() {
       <input
         type="text"
         placeholder="Enter Name"
+        value={name}
         onChange={(e) => setName(e.target.value)}
       />
 
@@ -59,6 +69,7 @@ function Register() {
       <input
         type="email"
         placeholder="Enter Email"
+        value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
 
@@ -67,6 +78,7 @@ function Register() {
       <input
         type="password"
         placeholder="Enter Password"
+        value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
 
