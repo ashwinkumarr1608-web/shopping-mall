@@ -12,8 +12,6 @@ function Register() {
 
   function handleRegister() {
 
-    alert("Button Clicked");
-
     axios.post(
       "https://shopping-mall-backend-mc8c.onrender.com/register",
       {
@@ -27,32 +25,18 @@ function Register() {
       alert(response.data);
 
       if (response.data === "OTP sent successfully") {
-
         navigate("/verify");
-
       }
 
     })
     .catch((error) => {
-
       console.log(error);
-
-      if (error.response) {
-        alert("Server Error");
-      }
-      else if (error.request) {
-        alert("Network Error");
-      }
-      else {
-        alert(error.message);
-      }
-
+      alert("Server Error");
     });
 
   }
 
   return (
-
     <div>
 
       <h1>Register Page</h1>
@@ -60,7 +44,6 @@ function Register() {
       <input
         type="text"
         placeholder="Enter Name"
-        value={name}
         onChange={(e) => setName(e.target.value)}
       />
 
@@ -69,7 +52,6 @@ function Register() {
       <input
         type="email"
         placeholder="Enter Email"
-        value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
 
@@ -78,20 +60,17 @@ function Register() {
       <input
         type="password"
         placeholder="Enter Password"
-        value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
 
       <br /><br />
 
-      <button type="button" onClick={handleRegister}>
+      <button onClick={handleRegister}>
         Register
       </button>
 
     </div>
-
   );
-
 }
 
 export default Register;
