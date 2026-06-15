@@ -31,7 +31,9 @@ let userData = {};
 
 // Gmail transporter
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
     user: "ashwinkumarr1608@gmail.com",
     pass: "chmbqlvsvsgxqmio"
@@ -45,21 +47,16 @@ app.get("/", (req, res) => {
 
 // Products
 app.get("/products", (req, res) => {
-
   db.query("SELECT * FROM products", (err, result) => {
-
     if (err) {
       res.send(err);
-    }
-    else {
+    } else {
       res.send(result);
     }
-
   });
-
 });
 
-// Register API (Send OTP)
+// Register API
 app.post("/register", (req, res) => {
 
   const { name, email, password } = req.body;
@@ -88,8 +85,7 @@ app.post("/register", (req, res) => {
     if (error) {
       console.log(error);
       res.send("OTP sending failed");
-    }
-    else {
+    } else {
       console.log("Email sent:", info.response);
       res.send("OTP sent successfully");
     }
@@ -98,7 +94,7 @@ app.post("/register", (req, res) => {
 
 });
 
-// Verify OTP API
+// Verify OTP
 app.post("/verifyotp", (req, res) => {
 
   const { otp } = req.body;
@@ -113,55 +109,47 @@ app.post("/verifyotp", (req, res) => {
         if (err) {
           console.log(err);
           res.send("Database Error");
-        }
-        else {
+        } else {
           res.send("OTP verified successfully");
         }
 
       }
     );
 
-  }
-  else {
-
+  } else {
     res.send("Invalid OTP");
-
   }
 
 });
 
-// Login API
+// Login
 app.post("/login", (req, res) => {
 
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    console.log(email, password);
-
-    const sql =
+  const sql =
     "SELECT * FROM users WHERE email=? AND password=?";
 
-    db.query(sql, [email, password], (err, result) => {
+  db.query(sql, [email, password], (err, result) => {
 
-        console.log(result);
+    if (err) {
+      console.log(err);
+      res.send("Error");
+    } else {
 
-        if (err) {
-            console.log(err);
-            res.send("Error");
-        }
-        else {
-            if (result.length > 0) {
-                res.send("Login Success");
-            }
-            else {
-                res.send("Invalid Email or Password");
-            }
-        }
-    });
+      if (result.length > 0) {
+        res.send("Login Success");
+      } else {
+        res.send("Invalid Email or Password");
+      }
+
+    }
+
+  });
 
 });
-// Server start
+
+// Start server
 app.listen(5000, () => {
-
   console.log("Server running on port 5000");
-
 });
