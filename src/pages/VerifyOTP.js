@@ -10,7 +10,7 @@ function VerifyOTP() {
 
   function handleVerify() {
 
-    axios.post("http://localhost:5000/verifyotp", {
+    axios.post("https://shopping-mall-backend-mc8c.onrender.com/verifyotp", {
 
       otp: otp
 
