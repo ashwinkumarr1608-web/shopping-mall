@@ -12,13 +12,16 @@ function Register() {
 
   function handleRegister() {
 
-    axios.post("https://shopping-mall-backend-mc8c.onrender.com/register", {
+    alert("Button Clicked");
 
-      name: name,
-      email: email,
-      password: password
-
-    })
+    axios.post(
+      "https://shopping-mall-backend-mc8c.onrender.com/register",
+      {
+        name: name,
+        email: email,
+        password: password
+      }
+    )
     .then((response) => {
 
       alert(response.data);
@@ -33,6 +36,7 @@ function Register() {
     .catch((error) => {
 
       console.log(error);
+      alert("Error");
 
     });
 
@@ -68,7 +72,7 @@ function Register() {
 
       <br /><br />
 
-      <button onClick={handleRegister}>
+      <button type="button" onClick={handleRegister}>
         Register
       </button>
 
