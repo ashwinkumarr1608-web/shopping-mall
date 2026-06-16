@@ -85,6 +85,25 @@ app.post("/verifyotp", (req, res) => {
     res.send("Invalid OTP");
   }
 });
+// Products API
+app.get("/products", (req, res) => {
+
+  db.query(
+    "SELECT * FROM products",
+    (err, result) => {
+
+      if (err) {
+        console.log(err);
+        res.status(500).send("Database Error");
+      }
+      else {
+        res.json(result);
+      }
+
+    }
+  );
+
+});
 // Login API
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
