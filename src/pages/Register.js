@@ -2,38 +2,46 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function handleRegister() {
+function Register() {
 
-  console.log("Button clicked");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  axios.post(
-    "https://shopping-mall-backend-mc8c.onrender.com/register",
-    {
-      name,
-      email,
-      password
-    }
-  )
-  .then((response) => {
+  const navigate = useNavigate();
 
-    console.log("Response =", response);
+  function handleRegister() {
 
-    alert(response.data);
+    console.log("Button clicked");
 
-    if (response.data === "OTP sent successfully") {
-      navigate("/verify");
-    }
+    axios.post(
+      "https://shopping-mall-backend-mc8c.onrender.com/register",
+      {
+        name,
+        email,
+        password
+      }
+    )
+    .then((response) => {
 
-  })
-  .catch((error) => {
+      console.log("Response =", response);
 
-    console.log("ERROR =", error);
+      alert(response.data);
 
-    alert("Server Error");
+      if (response.data === "OTP sent successfully") {
+        navigate("/verify");
+      }
 
-  });
+    })
+    .catch((error) => {
 
-}
+      console.log("ERROR =", error);
+
+      alert("Server Error");
+
+    });
+
+  }
 
   return (
     <div>
