@@ -26,11 +26,13 @@ function Register() {
 
       console.log("Response =", response);
 
-      alert(response.data);
-
       if (response.data === "OTP sent successfully") {
-        navigate("/verify");
-      }
+
+  console.log("Navigating to Verify Page");
+
+  window.location.href = "/verify";
+
+}
 
     })
     .catch((error) => {
