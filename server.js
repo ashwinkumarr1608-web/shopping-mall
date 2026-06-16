@@ -60,10 +60,11 @@ app.post("/register", (req, res) => {
   ).toString();
 
   console.log("Generated OTP:", generatedOTP);
+  console.log("Sending mail to:", email);
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
-    to: "ashwinkumarr1608@gmail.com",
+    to: email,
     subject: "OTP Verification",
     text: `Your OTP is ${generatedOTP}`,
   };
@@ -71,18 +72,20 @@ app.post("/register", (req, res) => {
   transporter.sendMail(mailOptions, (error, info) => {
 
     if (error) {
+
       console.log("Mail Error =", error);
-      res.send("OTP sending failed");
+
+      return res.send("OTP sending failed");
+
     }
-    else {
-      console.log("Email sent:", info.response);
-      res.send("OTP sent successfully");
-    }
+
+    console.log("Email sent:", info.response);
+
+    res.send("OTP sent successfully");
 
   });
 
 });
-
 // Verify OTP API
 app.post("/verifyotp", (req, res) => {
 
