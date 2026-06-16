@@ -1,6 +1,7 @@
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
+const nodemailer = require("nodemailer");
 
 require("dotenv").config();
 
@@ -29,6 +30,15 @@ db.connect((err) => {
 let generatedOTP = "";
 let userData = {};
 
+// Gmail Transporter
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
 // Home API
 app.get("/", (req, res) => {
   res.send("Server Running");
@@ -51,7 +61,25 @@ app.post("/register", (req, res) => {
 
   console.log("Generated OTP:", generatedOTP);
 
-  res.send("OTP sent successfully");
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "OTP Verification",
+    text: `Your OTP is ${generatedOTP}`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+
+    if (error) {
+      console.log("Mail Error =", error);
+      res.send("OTP sending failed");
+    }
+    else {
+      console.log("Email sent:", info.response);
+      res.send("OTP sent successfully");
+    }
+
+  });
 
 });
 
