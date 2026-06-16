@@ -1,14 +1,11 @@
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
-const nodemailer = require("nodemailer");
+const SibApiV3Sdk = require("sib-api-v3-sdk");
 require("dotenv").config();
-
 const app = express();
-
 app.use(cors());
 app.use(express.json());
-
 // MySQL Connection
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -17,7 +14,6 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME,
   port: process.env.DB_PORT,
 });
-
 db.connect((err) => {
   if (err) {
     console.log("Database Connection Failed", err);
@@ -25,65 +21,54 @@ db.connect((err) => {
     console.log("MySQL Connected");
   }
 });
-
+// Brevo API Setup
+const client = SibApiV3Sdk.ApiClient.instance;
+client.authentications["api-key"].apiKey = process.env.EMAIL_PASS;
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 let generatedOTP = "";
 let userData = {};
-
-// Brevo SMTP Transporter
-const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
 // Home API
 app.get("/", (req, res) => {
   res.send("Server Running");
 });
-
 // Register API
 app.post("/register", (req, res) => {
   const { name, email, password } = req.body;
-
   userData = {
     name,
     email,
     password,
   };
-
   generatedOTP = Math.floor(
     100000 + Math.random() * 900000
   ).toString();
-
   console.log("Generated OTP:", generatedOTP);
-  console.log("Sending mail to:", email);
-
-  const mailOptions = {
-    from: "ashwinkumarr1608@gmail.com",
-    to: email,
+  const sendSmtpEmail = {
+    sender: {
+      name: "Shopping Mall",
+      email: "ashwinkumarr1608@gmail.com",
+    },
+    to: [
+      {
+        email: email,
+      },
+    ],
     subject: "OTP Verification",
-    text: `Your OTP is ${generatedOTP}`,
+    textContent: `Your OTP is ${generatedOTP}`,
   };
-console.log("Sending mail to:", email);
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
+  apiInstance.sendTransacEmail(sendSmtpEmail)
+    .then(() => {
+      console.log("Email sent successfully");
+      res.send("OTP sent successfully");
+    })
+    .catch((error) => {
       console.log("Mail Error =", error);
-      return res.status(500).send("OTP sending failed");
-    }
-
-    console.log("Email sent:", info.response);
-    res.send("OTP sent successfully");
-  });
+      res.status(500).send("OTP sending failed");
+    });
 });
-
 // Verify OTP API
 app.post("/verifyotp", (req, res) => {
   const { otp } = req.body;
-
   if (otp === generatedOTP) {
     db.query(
       "INSERT INTO users(name,email,password) VALUES(?,?,?)",
@@ -93,7 +78,6 @@ app.post("/verifyotp", (req, res) => {
           console.log(err);
           return res.status(500).send("Database Error");
         }
-
         res.send("OTP verified successfully");
       }
     );
@@ -101,11 +85,9 @@ app.post("/verifyotp", (req, res) => {
     res.send("Invalid OTP");
   }
 });
-
 // Login API
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-
   db.query(
     "SELECT * FROM users WHERE email=? AND password=?",
     [email, password],
@@ -114,7 +96,6 @@ app.post("/login", (req, res) => {
         console.log(err);
         return res.status(500).send("Error");
       }
-
       if (result.length > 0) {
         res.send("Login Success");
       } else {
@@ -123,8 +104,6 @@ app.post("/login", (req, res) => {
     }
   );
 });
-
-// Start Server
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
