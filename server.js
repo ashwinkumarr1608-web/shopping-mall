@@ -63,7 +63,7 @@ app.post("/register", (req, res) => {
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
-    to: email,
+    to: "ashwinkumarr1608@gmail.com",
     subject: "OTP Verification",
     text: `Your OTP is ${generatedOTP}`,
   };
