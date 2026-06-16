@@ -1,7 +1,6 @@
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
-const nodemailer = require("nodemailer");
 
 require("dotenv").config();
 
@@ -30,15 +29,6 @@ db.connect((err) => {
 let generatedOTP = "";
 let userData = {};
 
-// Gmail Transporter
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
 // Home API
 app.get("/", (req, res) => {
   res.send("Server Running");
@@ -46,12 +36,13 @@ app.get("/", (req, res) => {
 
 // Register API
 app.post("/register", (req, res) => {
+
   const { name, email, password } = req.body;
 
   userData = {
     name,
     email,
-    password,
+    password
   };
 
   generatedOTP = Math.floor(
@@ -60,69 +51,71 @@ app.post("/register", (req, res) => {
 
   console.log("Generated OTP:", generatedOTP);
 
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: "OTP Verification",
-    text: `Your OTP is ${generatedOTP}`,
-  };
+  res.send("OTP sent successfully");
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log(error);
-      res.send("OTP sending failed");
-    } else {
-      console.log("Email sent:", info.response);
-      res.send("OTP sent successfully");
-    }
-  });
 });
 
 // Verify OTP API
 app.post("/verifyotp", (req, res) => {
+
   const { otp } = req.body;
 
   if (otp === generatedOTP) {
+
     db.query(
       "INSERT INTO users(name,email,password) VALUES(?,?,?)",
       [userData.name, userData.email, userData.password],
       (err, result) => {
+
         if (err) {
           console.log(err);
           res.send("Database Error");
-        } else {
+        }
+        else {
           res.send("OTP verified successfully");
         }
+
       }
     );
-  } else {
+
+  }
+  else {
     res.send("Invalid OTP");
   }
+
 });
 
 // Login API
 app.post("/login", (req, res) => {
+
   const { email, password } = req.body;
 
   db.query(
     "SELECT * FROM users WHERE email=? AND password=?",
     [email, password],
     (err, result) => {
+
       if (err) {
         console.log(err);
         res.send("Error");
-      } else {
+      }
+      else {
+
         if (result.length > 0) {
           res.send("Login Success");
-        } else {
+        }
+        else {
           res.send("Invalid Email or Password");
         }
+
       }
+
     }
   );
+
 });
 
-// Server Start
+// Start Server
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
