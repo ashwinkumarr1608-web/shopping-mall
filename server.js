@@ -30,9 +30,11 @@ db.connect((err) => {
 let generatedOTP = "";
 let userData = {};
 
-// Gmail Transporter
+// Brevo SMTP
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp-relay.brevo.com",
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -60,7 +62,6 @@ app.post("/register", (req, res) => {
   ).toString();
 
   console.log("Generated OTP:", generatedOTP);
-  console.log("Sending mail to:", email);
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
@@ -72,20 +73,17 @@ app.post("/register", (req, res) => {
   transporter.sendMail(mailOptions, (error, info) => {
 
     if (error) {
-
       console.log("Mail Error =", error);
-
       return res.send("OTP sending failed");
-
     }
 
     console.log("Email sent:", info.response);
-
     res.send("OTP sent successfully");
 
   });
 
 });
+
 // Verify OTP API
 app.post("/verifyotp", (req, res) => {
 
@@ -101,17 +99,17 @@ app.post("/verifyotp", (req, res) => {
         if (err) {
           console.log(err);
           res.send("Database Error");
-        }
-        else {
+        } else {
           res.send("OTP verified successfully");
         }
 
       }
     );
 
-  }
-  else {
+  } else {
+
     res.send("Invalid OTP");
+
   }
 
 });
@@ -127,16 +125,20 @@ app.post("/login", (req, res) => {
     (err, result) => {
 
       if (err) {
+
         console.log(err);
         res.send("Error");
-      }
-      else {
+
+      } else {
 
         if (result.length > 0) {
+
           res.send("Login Success");
-        }
-        else {
+
+        } else {
+
           res.send("Invalid Email or Password");
+
         }
 
       }
