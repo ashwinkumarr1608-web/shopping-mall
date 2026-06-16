@@ -21,7 +21,7 @@ function Home() {
 
       <div className="container mt-4">
         <h1>Online Shopping Mall</h1>
-        <h2>Welcome Ashwin 😎</h2>
+        <h2>Welcome Arshad 😎</h2>
       </div>
     </>
   );
