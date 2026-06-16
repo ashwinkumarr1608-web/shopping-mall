@@ -26,6 +26,8 @@ function Register() {
 
       console.log("Response =", response);
 
+      alert(response.data);
+
       if (response.data === "OTP sent successfully") {
 
   console.log("Navigating to Verify Page");
@@ -33,7 +35,6 @@ function Register() {
   window.location.href = "/verify";
 
 }
-
     })
     .catch((error) => {
 
