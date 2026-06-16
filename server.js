@@ -63,12 +63,12 @@ app.post("/register", (req, res) => {
   console.log("Sending mail to:", email);
 
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: "ashwinkumarr1608@gmail.com",
     to: email,
     subject: "OTP Verification",
     text: `Your OTP is ${generatedOTP}`,
   };
-
+console.log("Sending mail to:", email);
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.log("Mail Error =", error);
