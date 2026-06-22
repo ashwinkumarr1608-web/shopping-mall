@@ -4,74 +4,99 @@ import { useNavigate } from "react-router-dom";
 
 function Login() {
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    function handleLogin() {
+  function handleLogin() {
 
-        axios.post("https://shopping-mall-backend-mc8c.onrender.com/login", {
+    axios.post(
+      "https://shopping-mall-backend-mc8c.onrender.com/login",
+      {
+        email: email,
+        password: password
+      }
+    )
+    .then((response) => {
 
-            email: email,
-            password: password
+      if (response.data === "Login Success") {
 
-        })
-        .then((response) => {
+        localStorage.setItem("user", email);
 
-            if (response.data === "Login Success") {
+        alert("Login Successful ✅");
 
-                localStorage.setItem("user", email);
+        navigate("/products");
 
-                alert("Login Successful");
+      }
+      else {
 
-                navigate("/products");
+        alert("Invalid Email or Password ❌");
 
-            }
-            else {
+      }
 
-                alert("Invalid Email or Password");
+    })
+    .catch((error) => {
 
-            }
+      console.log(error);
 
-        })
-        .catch((error) => {
+      alert("Server Error");
 
-            console.log(error);
+    });
 
-        });
+  }
 
-    }
+  return (
 
-    return (
+    <div
+      className="d-flex justify-content-center align-items-center"
+      style={{
+        minHeight: "90vh",
+        background: "linear-gradient(to right, #141E30, #243B55)"
+      }}
+    >
 
-        <div>
+      <div
+        className="bg-white p-5 rounded shadow"
+        style={{
+          width: "400px"
+        }}
+      >
 
-            <h1>Login</h1>
+        <h1 className="text-center mb-4">
+          Login
+        </h1>
 
-            <input
-            type="email"
-            placeholder="Enter Email"
-            onChange={(e)=>setEmail(e.target.value)}
-            />
+        <input
+          type="email"
+          className="form-control"
+          placeholder="Enter Email"
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
-            <br /><br />
+        <br />
 
-            <input
-            type="password"
-            placeholder="Enter Password"
-            onChange={(e)=>setPassword(e.target.value)}
-            />
+        <input
+          type="password"
+          className="form-control"
+          placeholder="Enter Password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-            <br /><br />
+        <br />
 
-            <button onClick={handleLogin}>
-                Login
-            </button>
+        <button
+          className="btn btn-primary w-100"
+          onClick={handleLogin}
+        >
+          Login
+        </button>
 
-        </div>
+      </div>
 
-    );
+    </div>
+
+  );
 
 }
 

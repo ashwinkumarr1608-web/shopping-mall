@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { useState } from "react";
+
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import Cart from "./pages/Cart";
@@ -7,53 +8,100 @@ import Admin from "./pages/Admin";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import VerifyOTP from "./pages/VerifyOTP";
+
 function App() {
+
   const [cart, setCart] = useState([]);
+
   return (
     <BrowserRouter>
-      <div
+
+      {/* Navbar */}
+      <nav
         style={{
-          backgroundColor: "black",
-          padding: "15px"
+          backgroundColor: "#212529",
+          padding: "15px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
         }}
       >
-        <Link
-          to="/home"
-          style={{ color: "white", marginRight: "20px" }}
-        >
-          Home
-        </Link>
-        <Link
-          to="/products"
-          style={{ color: "white", marginRight: "20px" }}
-        >
-          Products
-        </Link>
-        <Link
-          to="/cart"
-          style={{ color: "white", marginRight: "20px" }}
-        >
-          Cart
-        </Link>
-        <Link
-          to="/login"
-          style={{ color: "white", marginRight: "20px" }}
-        >
-          Login
-        </Link>
-        <Link
-          to="/register"
-          style={{ color: "white" }}
-        >
-          Register
-        </Link>
-      </div>
+        <h2 style={{ color: "white" }}>
+          🛒 Shopping Mall
+        </h2>
+
+        <div>
+
+          <Link
+            to="/home"
+            style={{
+              color: "white",
+              textDecoration: "none",
+              marginRight: "20px"
+            }}
+          >
+            Home
+          </Link>
+
+          <Link
+            to="/products"
+            style={{
+              color: "white",
+              textDecoration: "none",
+              marginRight: "20px"
+            }}
+          >
+            Products
+          </Link>
+
+          <Link
+            to="/cart"
+            style={{
+              color: "white",
+              textDecoration: "none",
+              marginRight: "20px"
+            }}
+          >
+            Cart ({cart.length})
+          </Link>
+
+          <Link
+            to="/login"
+            style={{
+              color: "white",
+              textDecoration: "none",
+              marginRight: "20px"
+            }}
+          >
+            Login
+          </Link>
+
+          <Link
+            to="/register"
+            style={{
+              color: "white",
+              textDecoration: "none"
+            }}
+          >
+            Register
+          </Link>
+
+        </div>
+      </nav>
+
+      {/* Routes */}
       <Routes>
+
         <Route path="/" element={<Home />} />
+
         <Route path="/home" element={<Home />} />
+
         <Route path="/login" element={<Login />} />
+
         <Route path="/register" element={<Register />} />
+
         <Route path="/verify" element={<VerifyOTP />} />
+
         <Route
           path="/products"
           element={
@@ -63,6 +111,7 @@ function App() {
             />
           }
         />
+
         <Route
           path="/cart"
           element={
@@ -71,9 +120,13 @@ function App() {
             />
           }
         />
+
         <Route path="/admin" element={<Admin />} />
+
       </Routes>
+
     </BrowserRouter>
   );
 }
+
 export default App;
